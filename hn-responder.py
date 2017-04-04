@@ -10,10 +10,10 @@ from firebase import firebase
 
 with open('twitter-secrets.json') as twitter_secrets:
     s = json.load(twitter_secrets)
-    access_token = s['access_token']
+    access_token        = s['access_token']
     access_token_secret = s['access_token_secret']
-    consumer_key = s['consumer_key']
-    consumer_secret = s['consumer_secret']
+    consumer_key        = s['consumer_key']
+    consumer_secret     = s['consumer_secret']
 auth = OAuth1(consumer_key, consumer_secret, access_token, access_token_secret)
 
 firebase = firebase.FirebaseApplication(
@@ -31,13 +31,15 @@ def read_tweets():
             work_queue.put(tweet)
 
 
-def process(tweet):
+def run():
+    tweet = work_queue.get()
     if 'user' in tweet and tweet['user']['id'] == 14335498:
         tweet_id = tweet['id']
         title = re.sub('https://t.co.*$', '', tweet['text']).strip()
         hackernews_id = find_hackernews_id(title)
         hackernews_url = 'https://news.ycombinator.com/item?id=' + str(item_id)
         post_tweet(tweet_id, title)
+    work_queue.task_done()
 
 
 def find_hackernews_id(title):
@@ -51,15 +53,9 @@ def find_hackernews_id(title):
 
 def post_tweet(tweet_id, hackernews_url):
     url = 'https://api.twitter.com/1.1/statuses/update.json'
-    tweet_text = '@newsycombinator comments ' + hackernews_url
+    tweet_text = '@newsycombinator Comments: ' + hackernews_url
     params = {'status': tweet_text, 'in_reply_to_status_id': tweet_id}
     requests.post(url, auth=auth, data=params)
-
-
-def run():
-    tweet = work_queue.get()
-    process(tweet)
-    work_queue.task_done()
 
 
 t = Thread(target=run)

@@ -39,7 +39,7 @@ def run():
             title = re.sub('https://t.co.*$', '', tweet['text']).strip()
             hackernews_id = find_hackernews_id(title)
             hackernews_url = 'https://news.ycombinator.com/item?id=' + str(item_id)
-            post_tweet(tweet_id, title)
+            post_tweet(tweet_id, hackernews_url)
         work_queue.task_done()
 
 

@@ -38,8 +38,7 @@ def run():
             tweet_id = tweet['id']
             title = re.sub('https://t.co.*$', '', tweet['text']).strip()
             hackernews_id = find_hackernews_id(title)
-            hackernews_url = 'https://news.ycombinator.com/item?id=' + str(item_id)
-            post_tweet(tweet_id, hackernews_url)
+            post_tweet(tweet_id, hackernews_id)
         work_queue.task_done()
 
 
@@ -51,9 +50,11 @@ def find_hackernews_id(title):
             return item_id
 
 
-def post_tweet(tweet_id, hackernews_url):
+def post_tweet(tweet_id, hackernews_id):
     url = 'https://api.twitter.com/1.1/statuses/update.json'
-    tweet_text = '@newsycombinator Comments: ' + hackernews_url
+    tweet_text = (
+        '@newsycombinator Comments: ' +
+        'https://news.ycombinator.com/item?id=' + str(hackernews_id))
     params = {'status': tweet_text, 'in_reply_to_status_id': tweet_id}
     requests.post(url, auth=auth, data=params)
 

@@ -32,21 +32,21 @@ def read_tweets():
 
 
 def run():
-    tweet = work_queue.get()
-    if 'user' in tweet and tweet['user']['id'] == 14335498:
-        tweet_id = tweet['id']
-        title = re.sub('https://t.co.*$', '', tweet['text']).strip()
-        hackernews_id = find_hackernews_id(title)
-        hackernews_url = 'https://news.ycombinator.com/item?id=' + str(item_id)
-        post_tweet(tweet_id, title)
-    work_queue.task_done()
+    while True:
+        tweet = work_queue.get()
+        if 'user' in tweet and tweet['user']['id'] == 14335498:
+            tweet_id = tweet['id']
+            title = re.sub('https://t.co.*$', '', tweet['text']).strip()
+            hackernews_id = find_hackernews_id(title)
+            hackernews_url = 'https://news.ycombinator.com/item?id=' + str(item_id)
+            post_tweet(tweet_id, title)
+        work_queue.task_done()
 
 
 def find_hackernews_id(title):
     top_ids = firebase.get('/v0/topstories', None)
     for item_id in top_ids:
         item = firebase.get('/v0/item', item_id)
-        print item['title']
         if 'title' in item and item['title'].strip() == title:
             return item_id
 

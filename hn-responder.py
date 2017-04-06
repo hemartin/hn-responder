@@ -53,7 +53,7 @@ def find_hackernews_id(title):
 def post_tweet(tweet_id, hackernews_id):
     url = 'https://api.twitter.com/1.1/statuses/update.json'
     tweet_text = (
-        '@newsycombinator Comments: ' +
+        '@newsycombinator comments ' +
         'https://news.ycombinator.com/item?id=' + str(hackernews_id))
     params = {'status': tweet_text, 'in_reply_to_status_id': tweet_id}
     requests.post(url, auth=auth, data=params)

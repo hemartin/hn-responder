@@ -1,5 +1,8 @@
 # hn-responder
+
 A Python script that replies to every @newsycombinator tweet with a link to the article's comments page.
+
+![example](https://cloud.githubusercontent.com/assets/344615/24843774/c6d5855a-1d5a-11e7-86ef-263e2dc1c581.png)
 
 This script uses the Twitter API and Hacker News API via Firebase. It reads all tweets for the authenticated Twitter account and puts them into a queue. A background thread takes the tweets from the queue. If a tweet is from the @newsycombinator Twitter account, the background thread goes through all top Hacker News articles via the Firebase API and selects the article that matches the title of the tweet. It then sends out a reply tweet with the link to the article's comments page.
 

@@ -50,12 +50,21 @@ def find_hackernews_id(title):
             return item_id
 
 
+def trim_tweet(title, max_len):
+    trimmed_title = title
+    if len(title) > max_len:
+        trimmed_title = title[:max_len - 3] + '...'
+    return trimmed_title
+
+
 def post_tweet(tweet_id, title, hackernews_id):
     url = 'https://api.twitter.com/1.1/statuses/update.json'
+    trimmed_tweet = trim_tweet(title, 78)
     tweet_text = (
-        '@newsycombinator ' + title + 
-        ' https://news.ycombinator.com/item?id=' + str(hackernews_id))
-    params = {'status': tweet_text, 'in_reply_to_status_id': tweet_id}
+        'Comments to "' + trimmed_tweet + '"'
+        ' https://news.ycombinator.com/item?id=' + str(hackernews_id) +
+        ' https://twitter.com/newsycombinator/status/' + str(tweet_id))
+    params = {'status': tweet_text}
     requests.post(url, auth=auth, data=params)
 
 

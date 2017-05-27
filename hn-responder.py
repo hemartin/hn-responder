@@ -37,8 +37,9 @@ def run():
         if 'user' in tweet and tweet['user']['id'] == 14335498:
             tweet_id = tweet['id']
             title = re.sub('https://t.co.*$', '', tweet['text']).strip()
+            link = tweet['entities']['urls'][0]['expanded_url']
             hackernews_id = find_hackernews_id(title)
-            post_tweet(tweet_id, title, hackernews_id)
+            post_tweet(tweet_id, title, link, hackernews_id)
         work_queue.task_done()
 
 
@@ -57,13 +58,13 @@ def trim_tweet(title, max_len):
     return trimmed_title
 
 
-def post_tweet(tweet_id, title, hackernews_id):
+def post_tweet(tweet_id, title, link, hackernews_id):
     url = 'https://api.twitter.com/1.1/statuses/update.json'
-    trimmed_tweet = trim_tweet(title, 78)
+    trimmed_tweet = trim_tweet(title, 92)
     tweet_text = (
-        'Comments to "' + trimmed_tweet + '"'
+        trimmed_tweet
         ' https://news.ycombinator.com/item?id=' + str(hackernews_id) +
-        ' https://twitter.com/newsycombinator/status/' + str(tweet_id))
+        ' ' + link
     params = {'status': tweet_text}
     requests.post(url, auth=auth, data=params)
 

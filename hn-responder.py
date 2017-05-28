@@ -62,9 +62,9 @@ def post_tweet(tweet_id, title, link, hackernews_id):
     url = 'https://api.twitter.com/1.1/statuses/update.json'
     trimmed_tweet = trim_tweet(title, 92)
     tweet_text = (
-        trimmed_tweet
+        trimmed_tweet +
         ' https://news.ycombinator.com/item?id=' + str(hackernews_id) +
-        ' ' + link
+        ' ' + link)
     params = {'status': tweet_text}
     requests.post(url, auth=auth, data=params)
 

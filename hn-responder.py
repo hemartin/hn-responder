@@ -1,4 +1,5 @@
 #!/usr/bin/python
+# coding: utf-8
 
 import json
 import re
@@ -69,9 +70,15 @@ def post_tweet(tweet_id, title, link, hackernews_id):
     requests.post(url, auth=auth, data=params)
 
 
-t = Thread(target=run)
-t.daemon = True
-t.start()
+def main():
+    t = Thread(target=run)
+    t.daemon = True
+    t.start()
 
-read_tweets()
-work_queue.join()
+    read_tweets()
+    work_queue.join()
+
+
+if __name__ == '__main__':
+    main()
+

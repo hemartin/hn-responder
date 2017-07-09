@@ -9,6 +9,7 @@ from requests_oauthlib import OAuth1
 from threading import Thread
 from firebase import firebase
 
+
 with open('twitter-secrets.json') as twitter_secrets:
     s = json.load(twitter_secrets)
     access_token        = s['access_token']
@@ -17,7 +18,7 @@ with open('twitter-secrets.json') as twitter_secrets:
     consumer_secret     = s['consumer_secret']
 auth = OAuth1(consumer_key, consumer_secret, access_token, access_token_secret)
 
-firebase = firebase.FirebaseApplication(
+firebase_app = firebase.FirebaseApplication(
     'https://hacker-news.firebaseio.com', None)
 
 work_queue = Queue()
@@ -45,9 +46,9 @@ def run():
 
 
 def find_hackernews_id(title):
-    top_ids = firebase.get('/v0/topstories', None)
+    top_ids = firebase_app.get('/v0/topstories', None)
     for item_id in top_ids:
-        item = firebase.get('/v0/item', item_id)
+        item = firebase_app.get('/v0/item', item_id)
         if 'title' in item and item['title'].strip() == title:
             return item_id
 

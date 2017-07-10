@@ -50,13 +50,13 @@ def process_tweet(tweet):
         return
     tweet_id = tweet['id']
     title = extract_hackernews_title(tweet)
-    link = tweet['entities']['urls'][0]['expanded_url']
+    link = tweet['entities']['urls'][-1]['expanded_url']
     hackernews_id = find_hackernews_id(title)
     post_tweet(tweet_id, title, link, hackernews_id)
 
 
 def extract_hackernews_title(tweet):
-    text = re.sub('https://t.co.*$', '', tweet['text']).strip()
+    text = re.sub(r'\bhttps://t\.co/\S+$', '', tweet['text']).strip()
     return text
 
 

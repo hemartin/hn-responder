@@ -57,6 +57,8 @@ def process_tweet(tweet):
 
 def extract_hackernews_title(tweet):
     text = re.sub(r'\bhttps://t\.co/\S+$', '', tweet['text']).strip()
+    for entity in tweet['entities']['urls'][:-1]:
+        text = text.replace(entity['url'], entity['display_url'])
     return text
 
 

@@ -3,10 +3,11 @@
 
 import json
 import re
-import requests
 from Queue import Queue
-from requests_oauthlib import OAuth1
 from threading import Thread
+
+import requests
+from requests_oauthlib import OAuth1
 from firebase import firebase
 
 
@@ -24,6 +25,8 @@ firebase_app = firebase.FirebaseApplication(
 work_queue = Queue()
 
 
+
+
 def read_tweets():
     url = 'https://userstream.twitter.com/1.1/user.json'
     r = requests.get(url, auth=auth, stream=True)
@@ -36,13 +39,25 @@ def read_tweets():
 def run():
     while True:
         tweet = work_queue.get()
-        if 'user' in tweet and tweet['user']['id'] == 14335498:
-            tweet_id = tweet['id']
-            title = re.sub('https://t.co.*$', '', tweet['text']).strip()
-            link = tweet['entities']['urls'][0]['expanded_url']
-            hackernews_id = find_hackernews_id(title)
-            post_tweet(tweet_id, title, link, hackernews_id)
+        process_tweet(tweet)
         work_queue.task_done()
+
+
+def process_tweet(tweet):
+    if 'user' not in tweet:
+        return
+    if tweet['user']['id'] != 14335498:
+        return
+    tweet_id = tweet['id']
+    title = extract_hackernews_title(tweet)
+    link = tweet['entities']['urls'][0]['expanded_url']
+    hackernews_id = find_hackernews_id(title)
+    post_tweet(tweet_id, title, link, hackernews_id)
+
+
+def extract_hackernews_title(tweet):
+    text = re.sub('https://t.co.*$', '', tweet['text']).strip()
+    return text
 
 
 def find_hackernews_id(title):
